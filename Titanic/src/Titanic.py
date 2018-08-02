@@ -39,8 +39,8 @@ warnings.filterwarnings('ignore')
 
 def loadData():
     
-    train_data = pd.read_csv('../data/train.csv')
-    test_data = pd.read_csv('../data/test.csv')
+    train_data = pd.read_csv('../input/train.csv')
+    test_data = pd.read_csv('../input/test.csv')
     
     sns.set_style('whitegrid')
     train_data.head()
@@ -611,7 +611,7 @@ def modelEnsemble(titanic_train_data_X, titanic_train_data_Y, titanic_test_data_
     predictions = gbm.predict(x_test)
 
     StackingSubmission = pd.DataFrame({'PassengerId': PassengerId, 'Survived': predictions})
-    StackingSubmission.to_csv('SubmitResult.csv',index=False,sep=',')
+    StackingSubmission.to_csv('../output/SubmitResult.csv',index=False,sep=',')
         
 
 # main test
@@ -630,8 +630,8 @@ if __name__ == '__main__':
     #quantitativeTransfer(train_data)
     
     # need to do feature enginner
-    train_df_org = pd.read_csv('../data/train.csv')
-    test_df_org = pd.read_csv('../data/test.csv')
+    train_df_org = pd.read_csv('../input/train.csv')
+    test_df_org = pd.read_csv('../input/test.csv')
     test_df_org['Survived'] = 0
     DataSet = train_df_org.append(test_df_org)
     PassengerId = test_df_org['PassengerId']
