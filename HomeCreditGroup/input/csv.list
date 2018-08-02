@@ -1,0 +1,13 @@
+Input data is to large to upload Github  
+Please download from: https://www.kaggle.com/c/home-credit-default-risk/data  
+
+1. application_test.csv (48.7k x 121)  
+2. application_train.csv (308k x 122)   
+3. bureau.csv (1.72m x 17)  
+4. bureau_balance.csv (27.3m x 3) 
+5. credit_card_balance.csv (3.84m x 23)  
+6. HomeCredit_columns_description.csv (219 x 5)  
+7. installments_payments.csv (13.6m x 8)  
+8. POS_CASH_balance.csv (10.0m x 8)  
+9. previous_application.csv (1.67m x 37)  
+10. sample_submission.csv (48.7k x 2)  
