@@ -5,7 +5,7 @@
 * Name: Jianhaod
 * Email: daipku@163.com 
 * Github Repo: https://github.com/jianhaod/Kaggle 
-* Kaggle Profile: [account: krad](https://www.kaggle.com/daipku) https://www.kaggle.com/daipku
+* Kaggle Profile: [id:[krad](https://www.kaggle.com/daipku)] https://www.kaggle.com/daipku
 
 ## Project Analyse
 
@@ -49,25 +49,34 @@ c) Change model hyper parameters to increase model limitation
 
 ### a) data load
 
-* 
-
 ```python
-import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+def loadData():   
+    train_data = pd.read_csv('../input/train.csv')
+    test_data = pd.read_csv('../input/test.csv')
+    
+    sns.set_style('whitegrid')    
+    train_data.head(5)
+
+    train_data.info()
+    test_data.info()    
+    
+    return train_data, test_data
 ```
 
+![](/Titanic/images/Titanic_top_5.jpg)
 
-### b)
+### b) data preview
 
+* Training data overview
+![](/Titanic/images/Titanic_top_5.jpg)
+* Testing data overview
+![](/Titanic/images/Titanic_top_5.jpg)
 
 ### c)
-
-
-![](/static/images/titanic/test.jpg)
-
-
 
 ```python
 

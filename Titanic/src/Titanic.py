@@ -43,7 +43,7 @@ def loadData():
     test_data = pd.read_csv('../input/test.csv')
     
     sns.set_style('whitegrid')
-    train_data.head()
+    train_data.head(5)
 
     train_data.info()
     print("-" * 40)
