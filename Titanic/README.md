@@ -20,7 +20,7 @@ Steps:
 a) Download csv data files and load data
 b) Preview data; understanding the meaning of each column, 
    the type objects of each column, the format of data
-c) Data preliminary analysis; using plt tools and statistics methods; 
+c) feature preliminary analysis; using plt tools and statistics methods; 
    find out the correlation between the data and columns for Feature Engineering reference
 
 2. Feature Engineering
@@ -72,7 +72,8 @@ def loadData():
 
 ### b) data preview
 
-* Data Dictionary
+* Data Dictionary  
+
 | Variable | Definition | Key |
 | - | - | - |
 | survival | Survival           | 0 = No, 1 = Yes |
@@ -86,17 +87,49 @@ def loadData():
 | cabin    | Cabin number            | |    
 | embarked | Port of Embarkation     | C=Cherbourg, Q=Queenstown, S=Southampton |  
 
-* Training data overview
-![](/Titanic/images/Titanic_traindata_info.JPG)
-* Testing data overview
-![](/Titanic/images/Titanic_testdata_info.JPG)
-* Training data describe
-![](/Titanic/images/Titanic_testdata_desc.JPG)
+* Training data overview  
 
-### c)
+![](/Titanic/images/Titanic_traindata_info.JPG)
+
+* Testing data overview
+  
+![](/Titanic/images/Titanic_testdata_info.JPG)
+
+* Training data describe  
+
+![](/Titanic/images/Titanic_traindata_desc.JPG)
+
+### c) feature preliminary analysis
+
+* Nan feature value filled
+use vote mode fill `Embarked` null feature
+use `Uknow` fill `Cabin` feature
+use `RandomForest` to predict age with feature 'Survived', 'Pclass', 'SibSp', 'Parch', 'Fare'
 
 ```python
+def nanValueDeal(DataSet):   
+    DataSet.Embarked[DataSet.Embarked.isnull()] = DataSet.Embarked.dropna().mode().values
+    DataSet['Cabin'] = DataSet.Cabin.fillna('Uknow')
+    
+    AgeDataSet = DataSet[['Survived', 'Pclass', 'SibSp', 'Parch', 'Fare', 'Age']]
+    AgeDataSetNotNull = AgeDataSet.loc[(DataSet['Age'].notnull())]
+    AgeDataSetIsNull = AgeDataSet.loc[(DataSet['Age'].isnull())]
+    X = AgeDataSetNotNull.values[:, 0:-1]
+    Y = AgeDataSetNotNull.values[:, -1]    
+    
+    rfr = RandomForestRegressor(n_estimators=1000, n_jobs=-1)
+    rfr.fit(X,Y)
+    
+    PredictAges = rfr.predict(AgeDataSetIsNull.values[:, 0:-1])
+    DataSet.loc[DataSet['Age'].isnull(), ['Age']] = PredictAges   
+```
 
+* Feature and result correlation analysis
+Find out data result correlation with `Sex`, `Pclass`
 
+```python
+def dataAnayls(DataSet):  
+    DataSet[['Sex', 'Survived']].groupby(['Sex']).mean().plot.bar()
+    DataSet[['Pclass','Survived']].groupby(['Pclass']).mean().plot.bar()
 ```
 
