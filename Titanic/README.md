@@ -101,10 +101,10 @@ def loadData():
 
 ### c) feature preliminary analysis
 
-* Nan feature value filled
-use vote mode fill `Embarked` null feature
-use `Uknow` fill `Cabin` feature
-use `RandomForest` to predict age with feature 'Survived', 'Pclass', 'SibSp', 'Parch', 'Fare'
+* Nan feature value filled  
+use vote mode fill `Embarked` null feature  
+use `Uknow` fill `Cabin` feature  
+use `RandomForest` to predict age with feature `Survived`, `Pclass`, `SibSp`, `Parch`, `Fare`
 
 ```python
 def nanValueDeal(DataSet):   
@@ -125,11 +125,74 @@ def nanValueDeal(DataSet):
 ```
 
 * Feature and result correlation analysis
-Find out data result correlation with `Sex`, `Pclass`
 
 ```python
 def dataAnayls(DataSet):  
     DataSet[['Sex', 'Survived']].groupby(['Sex']).mean().plot.bar()
-    DataSet[['Pclass','Survived']].groupby(['Pclass']).mean().plot.bar()
+    DataSet[['Pclass','Survived']].groupby(['Pclass']).mean().plot.bar()    
+    DataSet[['Sex','Pclass','Survived']].groupby(['Pclass','Sex']).mean().plot.bar()
+    
+    sns.countplot('Embarked', hue = 'Survived', data = DataSet)
+    plt.title('Embarked and Survived')
+
+    has_sibsp = DataSet[DataSet['SibSp'] != 0]
+    no_sibsp = DataSet[DataSet['SibSp'] == 0]
+    plt.figure(figsize=(10,5))
+    plt.subplot(121)
+    has_sibsp['Survived'].value_counts().plot.pie(labels=['No Survived', 'Survived'], autopct = '%1.1f%%')
+    plt.xlabel('Has_SibSp')
+    
+    plt.subplot(122)
+    no_sibsp['Survived'].value_counts().plot.pie(labels=['No Survived', 'Survived'], autopct = '%1.1f%%')
+    plt.xlabel('No_SibSp')
+    plt.show()
+        
+    fig, axis = plt.subplots(1,2,figsize=(18,8))
+    DataSet[['Parch','Survived']].groupby(['Parch']).mean().plot.bar(ax = axis[0])
+    axis[0].set_title('Parch and Survived')
+    DataSet[['SibSp','Survived']].groupby(['SibSp']).mean().plot.bar(ax = axis[1])
+    axis[1].set_title('SibSp and Survived')
+    plt.show()
+    
+    plt.figure(figsize = (10, 5))
+    DataSet['Fare'].hist(bins = 70)
+    plt.title('Fare distribution')
+    plt.show()
+       
+    fare_not_survived = DataSet['Fare'][DataSet['Survived'] == 0]
+    fare_survived = DataSet['Fare'][DataSet['Survived'] == 1]
+    
+    average_fare =  pd.DataFrame([fare_not_survived.mean(), fare_survived.mean()])
+    std_fare  = pd.DataFrame([fare_not_survived.std(), fare_survived.std()])
+    average_fare.plot(yerr = std_fare, kind='bar', legend = False)
+    plt.title('Fare Mean and std with survived')
+    plt.show()
+         
 ```
 
+* `Plcass` and `Sex` correlation with survived
+
+![](/Titanic/images/Titanic_pclass_sex_bar.JPG)
+
+* `Embarked` correlation with survived
+
+![](/Titanic/images/Titanic_Embarked.JPG)
+
+* `Parch` and `SibSp` correlation with survived
+
+![](/Titanic/images/Titanic_Parch_SibSp_pipe.JPG)
+
+* `Parch` and `SibSp` distribution with survived
+
+![](/Titanic/images/Titanic_Parch_SibSp_bar.JPG)
+
+* `Fare` value distribution
+
+![](/Titanic/images/Titanic_fare_value_distribution.JPG)
+
+* `Fare` mean and std with survived or not 
+
+![](/Titanic/images/Titanic_fare_mean_std.JPG)
+
+
+ 
