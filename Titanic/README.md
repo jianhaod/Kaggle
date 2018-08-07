@@ -244,8 +244,9 @@ def ageAnayls(DataSet):
 ### a) Feature transform  
 
 * Transform object type feature discrete value to numberic   
-map `Embarked` value to one-hot code (feature value only has few kinds)    
-map `Cabin` value with factorize (feature value has a lot of kinds not fit use get_dummies method)     
+map `Embarked`, `Sex` value to one-hot code (feature value only has few kinds)   
+Extract `Ticket` pre letter to create new feature
+map `Cabin` , `Ticket_Letter` value with factorize (feature value has a lot of kinds not fit use get_dummies method)     
 
 ```python
 def qualitativeTransfer(DataSet):    
@@ -253,8 +254,16 @@ def qualitativeTransfer(DataSet):
     DataSet = DataSet.join(embarked_onehot_code)
     DataSet.drop(['Embarked'], axis = 1, inplace = True)
     
+    sex_onehot_code = pd.get_dummies(DataSet['Sex'])
+    DataSet = DataSet.join(sex_onehot_code)
+    DataSet.drop(['Sex'], axis = 1, inplace = True)
+    
     DataSet['CabinLetter'] = DataSet['Cabin'].map(lambda x : re.compile("([a-zA-Z]+)").search(x).group())
-    DataSet['CabinLetter'] = pd.factorize(DataSet['CabinLetter'])[0]
+    DataSet['CabinLetter'] = pd.factorize(DataSet['CabinLetter'])[0]    
+        
+    DataSet['Ticket_Letter'] = DataSet['Ticket'].str.split().str[0]
+    DataSet['Ticket_Letter'] = DataSet['Ticket_Letter'].apply(lambda x: 'U0' if x.isnumeric() else x)
+    DataSet['Ticket_Letter'] = pd.factorize(DataSet['Ticket_Letter'])[0]
 ```
 
 * Transform numberic type feature to target range   
@@ -267,17 +276,147 @@ from sklearn import preprocessing
 def quantitativeTransfer(DataSet):
     scaler = preprocessing.StandardScaler()
     DataSet['Age_scaled'] = scaler.fit_transform(DataSet['Age'].values.reshape(-1, 1))
-    
-    DataSet['FareBinning'] = pd.qcut(DataSet['Fare'], 5)
-    # dummies or factorize 
-    #DataSet['Fare_bin_id'] = pd.factorize(DataSet['FareBinning'])[0]   
-    fare_bin_dummies_df = pd.get_dummies(DataSet['Fare_bin']).rename(columns=lambda x: 'Fare_' + str(x))
+        
+    DataSet['FareBinning'] = pd.qcut(DataSet['Fare'], 5) 
+    # factorize and dummies 
+    DataSet['Fare_bin_id'] = pd.factorize(DataSet['FareBinning'])[0] 
+    fare_bin_dummies_df = pd.get_dummies(DataSet['Fare_bin_id']).rename(columns=lambda x: 'Fare_' + str(x))
     DataSet = pd.concat([DataSet, fare_bin_dummies_df], axis=1)
+    DataSet.drop(['FareBinning'], axis=1, inplace=True)
 ```
 
 ### b) Feature select  
 
- 
+* Select `Title`, Extract Title information and do transform
+
+```python
+def titleTransform(DataSet):
+    DataSet['Title'] = DataSet['Name'].map(lambda x: re.compile(", (.*?)\.").findall(x)[0])
+        
+    title_map_rule = {}
+    title_map_rule.update(dict.fromkeys(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer'))
+    title_map_rule.update(dict.fromkeys(['Don', 'Sir', 'the Countess', 'Dona', 'Lady'], 'Royalty'))
+    title_map_rule.update(dict.fromkeys(['Mme', 'Ms', 'Mrs'], 'Mrs'))
+    title_map_rule.update(dict.fromkeys(['Mlle', 'Miss'], 'Miss'))
+    title_map_rule.update(dict.fromkeys(['Mr'], 'Mr'))
+    title_map_rule.update(dict.fromkeys(['Master','Jonkheer'], 'Master'))
+    DataSet['Title'] = DataSet['Title'].map(title_map_rule)
+    
+    title_onehot_code = pd.get_dummies(DataSet['Title'])
+    DataSet = DataSet.join(title_onehot_code)
+    DataSet.drop(['Title'], axis = 1, inplace = True)
+
+    return DataSet
+```
+
+* Select `plcass`, combine `Fare` to define pclass category low, middle, high etc
+create a new feature `Plcass_Fare_Category`, and then do dummy
+
+```python
+def pclassCategory(DataSet):
+    Pclass1_mean_fare = DataSet['Fare'].groupby(by=DataSet['Pclass']).mean().get([1]).values[0]
+    Pclass2_mean_fare = DataSet['Fare'].groupby(by=DataSet['Pclass']).mean().get([2]).values[0]
+    Pclass3_mean_fare = DataSet['Fare'].groupby(by=DataSet['Pclass']).mean().get([3]).values[0]
+    
+    # build Pclass_Fare Category
+    DataSet['Pclass_Fare_Category'] = DataSet.apply(pclass_fare_category, args=(
+    Pclass1_mean_fare, Pclass2_mean_fare, Pclass3_mean_fare), axis=1)
+    pclass_level = LabelEncoder()
+    
+    pclass_level.fit(np.array(
+    ['Pclass1_Low', 'Pclass1_High', 'Pclass2_Low', 'Pclass2_High', 'Pclass3_Low', 'Pclass3_High']))
+    # dummy pclass category
+    DataSet['Pclass_Fare_Category'] = pclass_level.transform(DataSet['Pclass_Fare_Category'])
+    pclass_dummies_df = pd.get_dummies(DataSet['Pclass_Fare_Category']).rename(columns=lambda x: 'Pclass_' + str(x))
+    DataSet = pd.concat([DataSet, pclass_dummies_df], axis=1)
+    # factorize
+    DataSet['Pclass'] = pd.factorize(DataSet['Pclass'])[0]
+    
+    return DataSet
+```
+
+* Select `Parch` and `SibSp` to compute `Family_Size`
+create a new feature `Family_Size_Category` with Family_Size and then do dummy
+
+```python
+def familySize(DataSet):
+    def family_size_category(family_size):
+        if family_size <= 1:
+            return 'Single'
+        elif family_size <= 4:
+            return 'Small_Family'
+        else:
+            return 'Large_Family'
+
+    DataSet['Family_Size'] = DataSet['Parch'] + DataSet['SibSp'] + 1
+    DataSet['Family_Size_Category'] = DataSet['Family_Size'].map(family_size_category)
+    
+    le_family = LabelEncoder()
+    le_family.fit(np.array(['Single', 'Small_Family', 'Large_Family']))
+    DataSet['Family_Size_Category'] = le_family.transform(DataSet['Family_Size_Category'])
+    
+    family_size_dummies_df = pd.get_dummies(DataSet['Family_Size_Category'],
+                                        prefix=DataSet[['Family_Size_Category']].columns[0])
+    DataSet = pd.concat([DataSet, family_size_dummies_df], axis=1)
+    
+    return DataSet
+```
+
+* Select most import feature `Age`  
+use series orignal and created features `Embarked`, `Sex`, `Title`, `Fare`, `Pclass`    
+and `Name_length`, `Family_Size`, `Family_Size_Category`, `Fare_bin_id`  
+use `GradientBoostingRegressor` and `RandomForestRegressor` two models predict the result  
+
+```python
+def agePredict(ageTrainData, ageTestData):
+    age_X_train = ageTrainData.drop(['Age'], axis = 1)
+    age_Y_train = ageTrainData['Age']
+    age_X_test = ageTestData.drop(['Age'], axis = 1)
+
+    # model 1 gbm
+    gbm_reg = GradientBoostingRegressor(random_state=42)
+    gbm_reg_param_grid = {'n_estimators': [2000], 'max_depth': [4], 'learning_rate': [0.01], 'max_features': [3]}
+    gbm_reg_grid = model_selection.GridSearchCV(gbm_reg, gbm_reg_param_grid, cv=10, n_jobs=25, verbose=1, scoring='neg_mean_squared_error')
+    gbm_reg_grid.fit(age_X_train, age_Y_train)
+    ageTestData.loc[:, 'Age_GB'] = gbm_reg_grid.predict(age_X_test)
+
+    # model 2 rf
+    rf_reg = RandomForestRegressor()
+    rf_reg_param_grid = {'n_estimators': [200], 'max_depth': [5], 'random_state': [0]}
+    rf_reg_grid = model_selection.GridSearchCV(rf_reg, rf_reg_param_grid, cv=10, n_jobs=25, verbose=1, scoring='neg_mean_squared_error')
+    rf_reg_grid.fit(age_X_train, age_Y_train)
+    ageTestData.loc[:, 'Age_RF'] = rf_reg_grid.predict(age_X_test)
+
+    # two models merge
+    ageTestData.loc[:, 'Age'] = np.mean([ageTestData['Age_GB'], ageTestData['Age_RF']])
+    ageTestData.drop(['Age_GB', 'Age_RF'], axis=1, inplace=True)
+
+    return ageTestData
+```
 
 
+## 2. Model Select   
+
+```python
+def preDataSet(DataSet):    
+    # regulariz Age/fare
+    scale_age_fare = preprocessing.StandardScaler().fit(DataSet[['Age','Fare', 'Name_length']])
+    DataSet[['Age','Fare', 'Name_length']] = scale_age_fare.transform(DataSet[['Age','Fare', 'Name_length']])
+
+    # dropout feature
+    combined_data_backup = DataSet
+    DataSet.drop(['PassengerId', 'Embarked', 'Sex', 'Name', 'Title', 'Fare_bin_id', 'Pclass_Fare_Category', 
+                          'Parch', 'SibSp', 'Family_Size_Category', 'Ticket'],axis=1,inplace=True)
+    
+    # split training and testing data
+    train_data = DataSet[:891]
+    test_data = DataSet[891:]
+
+    titanic_train_data_X = train_data.drop(['Survived'],axis=1)
+    titanic_train_data_Y = train_data['Survived']
+    titanic_test_data_X = test_data.drop(['Survived'],axis=1)
+    titanic_train_data_X.shape
+    
+    return titanic_train_data_X, titanic_train_data_Y, titanic_test_data_X
+```
 
