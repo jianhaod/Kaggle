@@ -66,7 +66,7 @@ def loadData():
     return train_data, test_data
 ```
 
-![](/Titanic/images/Titanic_top_5.jpg)
+![](/1.1_Titanic/images/Titanic_top_5.jpg)
 
 ### b) data preview
 
@@ -87,15 +87,15 @@ def loadData():
 
 * Training data overview  
 
-![](/Titanic/images/Titanic_traindata_info.JPG)
+![](/1.1_Titanic/images/Titanic_traindata_info.JPG)
 
 * Testing data overview
   
-![](/Titanic/images/Titanic_testdata_info.JPG)
+![](/1.1_Titanic/images/Titanic_testdata_info.JPG)
 
 * Training data describe  
 
-![](/Titanic/images/Titanic_traindata_desc.JPG)
+![](/1.1_Titanic/images/Titanic_traindata_desc.JPG)
 
 ### c) feature preliminary analysis
 
@@ -169,27 +169,27 @@ def dataAnayls(DataSet):
 
 * `Plcass` and `Sex` correlation with survived
 
-![](/Titanic/images/Titanic_pclass_sex_bar.JPG)
+![](/1.1_Titanic/images/Titanic_pclass_sex_bar.JPG)
 
 * `Embarked` correlation with survived
 
-![](/Titanic/images/Titanic_Embarked.JPG)
+![](/1.1_Titanic/images/Titanic_Embarked.JPG)
 
 * `Parch` and `SibSp` correlation with survived
 
-![](/Titanic/images/Titanic_Parch_SibSp_pipe.JPG)
+![](/1.1_Titanic/images/Titanic_Parch_SibSp_pipe.JPG)
 
 * `Parch` and `SibSp` distribution with survived
 
-![](/Titanic/images/Titanic_Parch_SibSp_bar.JPG)
+![](/1.1_Titanic/images/Titanic_Parch_SibSp_bar.JPG)
 
 * `Fare` value distribution
 
-![](/Titanic/images/Titanic_fare_value_distribution.JPG)
+![](/1.1_Titanic/images/Titanic_fare_value_distribution.JPG)
 
 * `Fare` mean and std with survived or not 
 
-![](/Titanic/images/Titanic_fare_mean_std.JPG)
+![](/1.1_Titanic/images/Titanic_fare_mean_std.JPG)
 
 * `Age` correlation with survived analysis
 
@@ -223,19 +223,19 @@ def ageAnayls(DataSet):
 
 * `Age` value distribution and box-plot show 
 
-![](/Titanic/images/Titanic_age_value_distribution.JPG)
+![](/1.1_Titanic/images/Titanic_age_value_distribution.JPG)
 
 * `Age` survived and non-survived distribution
 
-![](/Titanic/images/Titanic_age_survived_distribution.JPG)
+![](/1.1_Titanic/images/Titanic_age_survived_distribution.JPG)
 
 * `Age` survived ratio bar
 
-![](/Titanic/images/Titanic_age_survived_mean_bar.JPG)
+![](/1.1_Titanic/images/Titanic_age_survived_mean_bar.JPG)
 
 * `Age` split by group bar
 
-![](/Titanic/images/Titanic_age_group_bar.JPG)
+![](/1.1_Titanic/images/Titanic_age_group_bar.JPG)
 
 ## 2. Feature Engineering  
 
@@ -493,10 +493,10 @@ def modelEnsemble(titanic_train_data_X, titanic_train_data_Y, titanic_test_data_
 
 * Public Leaderboard validation Score
  
-![](/Titanic/images/Titanic_submit_result.JPG)
+![](/1.1_Titanic/images/Titanic_submit_result.JPG)
 
 * Competitions result rank in all teams
 
-![](/Titanic/images/Titanic_rank_score.JPG)
+![](/1.1_Titanic/images/Titanic_rank_score.JPG)
 
 

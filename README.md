@@ -1,6 +1,6 @@
 # Kaggle Competitions In Action  
 
-![](/material/images/kaggle_log)
+![](/material/images/kaggle_log.jpg)
 
 Brief Contents
   
