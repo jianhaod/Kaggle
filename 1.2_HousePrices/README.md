@@ -59,14 +59,9 @@ def loadDataSet():
     DataSet.describe()    
     return DataSet, train, test
 ```
-
-![](/1.2_HousePrices/images/HousePrice_data_describe1.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe2.JPG)
-
-![](/1.2_HousePrices/images/HousePrice_data_describe3.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe4.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe5.JPG) 
-
 ### b) data preview
 
-* Data Dictionary 
+![](/1.2_HousePrices/images/HousePrice_data_describe.JPG)
 
 ### c) feature preliminary analysis
 
@@ -111,4 +106,35 @@ def correlationAnalys(trainData):
 
 ![](/1.2_HousePrices/images/HousePrice_pairpoint_pic.png)
 
+* Analysis train data `SalePrice`, `GrliveArea`, `TotalBsmtSF` distribution curve and scatter diagram  
 
+```python
+def distributionAnalys(trainData):
+    sns.distplot(trainData['SalePrice'], fit = stats.norm)   
+    print("Skewness: %f" %trainData['SalePrice'].skew())
+    print("Kurtosis: %f" %trainData['SalePrice'].kurt())
+    
+    data1 = pd.concat([trainData['SalePrice'], trainData['GrLivArea']], axis=1)
+    data1.plot.scatter(x='GrLivArea', y='SalePrice', ylim=(0,800000))
+       
+    fig = plt.figure()
+    sns.distplot(trainData['GrLivArea'], fit = stats.norm)
+
+    data1 = pd.concat([trainData['SalePrice'], trainData['TotalBsmtSF']], axis=1)
+    data1.plot.scatter(x='TotalBsmtSF', y='SalePrice', ylim=(0,800000));
+
+    fig = plt.figure()
+    sns.distplot(trainData['TotalBsmtSF'], fit = stats.norm);
+
+    data2 = pd.concat([trainData['SalePrice'], trainData['OverallQual']], axis=1)
+    f, ax = plt.subplots(figsize=(8, 6))
+    fig = sns.boxplot(x='OverallQual', y="SalePrice", data=data2)
+    fig.axis(ymin=0, ymax=800000);
+   
+    fig = plt.figure()
+    sns.countplot(x='MoSold',data=trainData)
+```
+
+* `SalePrice` distribution curve    
+
+![](/1.2_HousePrices/images/HousePrice_trainData_price_norm.JPG)
