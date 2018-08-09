@@ -10,8 +10,8 @@
 ## Project Analyse
 
 * Getting Started Prediction Competition
-* Regression Program: 
-* Algorthims: 
+* Regression Program: use Multi-dimension features to predict scale target `prices`
+* Algorthims: `LASSO`, `ElasticNet`, `XGBOOST`
 
 ```
 Steps: 
@@ -49,20 +49,66 @@ c) Change model hyper parameters to increase model limitation
 
 ```python
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-def loadData():   
-    train_data = pd.read_csv('../input/train.csv')
-    test_data = pd.read_csv('../input/test.csv')
-    
-    sns.set_style('whitegrid')    
-    train_data.head(5)
-
-    train_data.info()
-    test_data.info()
-    train_data.describe()    
-    
-    return train_data, test_data
+def loadDataSet():
+    train = pd.read_csv("../data/train.csv")
+    test = pd.read_csv("../data/test.csv")
+    DataSet = pd.concat((train.loc[:, 'MSSubClass':'SaleCondition'], 
+                        test.loc[:, 'MSSubClass':'SaleCondition']), ignore_index = True)
+    DataSet.info()
+    DataSet.describe()    
+    return DataSet, train, test
 ```
+
+![](/1.2_HousePrices/images/HousePrice_data_describe1.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe2.JPG)
+
+![](/1.2_HousePrices/images/HousePrice_data_describe3.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe4.JPG) ![](/1.2_HousePrices/images/HousePrice_data_describe5.JPG) 
+
+### b) data preview
+
+* Data Dictionary 
+
+### c) feature preliminary analysis
+
+* Find out all the correlation ship with each features  
+Show the correlation ship with each features  
+Show the top 10 most import features which impact `SalePrice`  
+Show the pairpoint picture with `SalePrice`, `OverallQual`, `GrLivArea`, `GarageCars`, `TotalBsmtSF`, `FullBath`, `YearBuilt`
+
+```python
+def correlationAnalys(trainData):   
+    corrmat = trainData.corr()
+    plt.subplots(figsize = (12, 9))
+    sns.heatmap(corrmat, vmax = 0.9, square = True)
+    
+    k = 10
+    plt.figure(figsize = (12, 9))
+    cols = corrmat.nlargest(k, 'SalePrice')['SalePrice'].index
+    cm = np.corrcoef(trainData[cols].values.T)
+    sns.set(font_scale=1.25)
+    hm = sns.heatmap(cm, cbar = True, square = True, fmt='.2f', 
+                     annot_kws = {'size': 10}, yticklabels = cols.values, xticklabels = cols.values)
+    plt.show()
+    
+    Corr = trainData.corr()
+    Corr[Corr['SalePrice'] > 0.5]
+    
+    sns.set()
+    cols = ['SalePrice', 'OverallQual', 'GrLivArea', 'GarageCars', 'TotalBsmtSF', 'FullBath', 'YearBuilt']
+    sns.pairplot(trainData[cols], size = 2.5)
+    plt.show()
+```
+
+* Correlation heat map  
+
+![](/1.2_HousePrices/images/HousePrice_correlation_feature.JPG)
+
+* Top 10 features most correlation with SalePrice  
+
+![](/1.2_HousePrices/images/HousePrice_top10_heatmap.JPG)
+
+* Features Pairpoint picture    
+
+![](/1.2_HousePrices/images/HousePrice_pairpoint_pic.png)
+
 
