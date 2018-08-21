@@ -144,7 +144,7 @@ def distributionAnalys(trainData):
 
 ### a) Feature transform
 
-* Data clean `Nan` value filled
+* Data clean `Nan` value filled  
 `pool`, `Garage*`, `Bsmt*`, `MasVnr*`, `MS*`, `LotFrontage`, and etc feature Nan value filled  
 `GarageYrBlt` year feature do value map   
 
