@@ -5,7 +5,13 @@
 Brief Contents
   
 Preface:  
-Tensorflow(1.1.0) Python(2.7.14 |Anaconda, Inc.|)  
+Using Common Tools(including but not limited to)        
+
+![](/material/images/tools.png)   
+
+Scikit-learn General Process    
+
+![](/material/images/scikit_learn.jpg)   
   
 Part 1. Getting Started
 
@@ -14,6 +20,9 @@ Kaggle Project Link: https://www.kaggle.com/c/titanic
 
 1.2 House Prices: Advanced Regression Techniques  
 Kaggle Project Link: https://www.kaggle.com/c/house-prices-advanced-regression-techniques  
+
+1.3 Digit Recognizer: Learn computer vision fundamentals with the famous MNIST data  
+Kaggle Project Link: https://www.kaggle.com/c/digit-recognizer  
   
 Part 2. Featured Prediction Competition  
   

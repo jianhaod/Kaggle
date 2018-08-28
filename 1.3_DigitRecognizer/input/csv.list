@@ -1,0 +1,6 @@
+Input data is to large to upload Github
+Please download from: https://www.kaggle.com/c/digit-recognizer/data
+
+1. sample_submission.csv (28k x 2)  
+2. test.csv (28k x 784)  
+3. train.csv (42.0k x 785)  
