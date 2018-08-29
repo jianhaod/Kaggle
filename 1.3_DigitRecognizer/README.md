@@ -229,5 +229,5 @@ def EnsemleResult(y_all_pred):
 
 * Public Leaderboard validation Score
 
-![](/1.2_HousePrices/images/DigitRecognizer_submit_result.JPG)
+![](/1.3_DigitRecognizer/images/DigitRecognizer_submit_result.JPG)
 
