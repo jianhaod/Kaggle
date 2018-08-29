@@ -83,15 +83,33 @@ if __name__ == '__main__':
     trainData, trainLabel, testData = loadDataSet()
     pcatrainData, pcatestData = dataPCA(trainData, testData)
 
-    #svmClf = svmClassifier(pcatrainData, trainLabel)
+    print("start svm")
+    svmClf = svmClassifier(pcatrainData, trainLabel)
     #svmtestLabel = svmClf.predict(pcatestData)
+    y_all_pred[0] = svmClf.predict(pcatestData)
     #saveResult(svmtestLabel, r'./SVM.csv')
+    print("svm end")
     
-    #rfClf = randomforestClassifier(pcatrainData, trainLabel)
+    print("start rf")
+    rfClf = randomforestClassifier(pcatrainData, trainLabel)
     #rftestLabel = rfClf.predict(pcatestData)
+    y_all_pred[1] = rfClf.predict(pcatestData)
     #saveResult(rftestLabel, r'./RF.csv')
+    print("rf end")
 
+    print("start knn")
     knnClf = knnClassifer(pcatrainData, trainLabel)
-    knntestLabel = knnClf.predict(pcatestData)
-    saveResult(knntestLabel, r'./KNN.csv')
+    y_all_pred[2] = knnClf.predict(pcatestData)
+    #saveResult(knntestLabel, r'./KNN.csv')
+    print("knn end")
 
+    model_name = "Ensemble"
+    print(y_pred.shape)
+    y_ensem_pred = np.zeros((28000,))
+    for i,line in enumerate(y_all_pred.T):
+        y_ensem_pred[i] = np.argmax(np.bincount(line))
+    print(y_ensem_pred.shape, y_ensem_pred)
+    y_ensem_pred = y_ensem_pred.astype("int64")
+    output_prediction(y_ensem_pred, model_name)
+    
+    saveResult(y_ensem_pred, r'./final_result.csv')
